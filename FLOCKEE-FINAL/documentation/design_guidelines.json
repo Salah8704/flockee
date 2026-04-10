@@ -1,0 +1,96 @@
+{
+  "project_name": "Flockee",
+  "design_philosophy": {
+    "theme": "Professional Mobility / Eco-Tech / Parisian",
+    "core_concept": "The 'Tesla' of Delivery Bikes. Clean, efficient, reliable.",
+    "visual_style": "Swiss Minimalist meets Tech Utility. High whitespace, structured grids, bold typography for headings, vibrant functional colors.",
+    "emotional_tone": "Trustworthy, Efficient, Dynamic, Premium."
+  },
+  "typography": {
+    "primary_font": {
+      "name": "Blair ITC Medium",
+      "fallback": "Michroma, Orbitron, Montserrat, sans-serif",
+      "usage": "Headings (H1-H3), Hero Text, Navigation",
+      "notes": "If Blair ITC is not available via webfonts, use 'Montserrat' with 'uppercase' and 'tracking-widest' to mimic the wide geometric feel, or 'Michroma' for a more tech look."
+    },
+    "secondary_font": {
+      "name": "Poppins",
+      "fallback": "sans-serif",
+      "usage": "Body text, Descriptions, UI elements (buttons, inputs)",
+      "weights": ["Regular (400)", "Medium (500)", "SemiBold (600)"]
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary_blue": "#27AAE1",
+      "primary_green": "#2BB673",
+      "neutral_black": "#191919",
+      "neutral_white": "#FFFFFF",
+      "secondary_dark_teal": "#1a535c",
+      "secondary_off_white": "#f7fff7",
+      "accent_coral": "#ff6b6b",
+      "accent_yellow": "#ffe66d"
+    },
+    "usage": {
+      "background_main": "#FFFFFF",
+      "background_alt": "#F7FFF7",
+      "text_primary": "#191919",
+      "text_secondary": "#4B5563",
+      "text_inverted": "#FFFFFF",
+      "primary_cta": "bg-gradient-to-r from-[#27AAE1] to-[#2BB673]",
+      "secondary_cta": "bg-[#191919] text-white",
+      "borders": "#E5E7EB"
+    }
+  },
+  "layout_strategies": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "spacing": {
+      "section_padding": "py-20 lg:py-32",
+      "element_gap": "gap-8 lg:gap-12"
+    },
+    "grids": {
+      "bento_features": "grid grid-cols-1 md:grid-cols-3 gap-6",
+      "comparison_table": "grid grid-cols-1 lg:grid-cols-2 gap-8 items-center"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "rounded-full px-8 py-4 font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-gradient-to-r from-[#27AAE1] to-[#2BB673]",
+      "secondary": "rounded-full px-8 py-4 font-semibold bg-[#191919] text-white hover:bg-[#2c2c2c] transition-all",
+      "outline": "rounded-full px-8 py-4 font-semibold border-2 border-[#191919] text-[#191919] hover:bg-[#191919] hover:text-white transition-all"
+    },
+    "cards": {
+      "feature": "bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100",
+      "pricing": "bg-white p-10 rounded-3xl shadow-xl border border-gray-100 relative overflow-hidden"
+    },
+    "inputs": {
+      "default": "rounded-lg border-gray-300 focus:border-[#27AAE1] focus:ring-[#27AAE1]"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_bg": "https://images.pexels.com/photos/31638900/pexels-photo-31638900.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "product_action": "https://images.unsplash.com/photo-1642440724438-3c77b976255e?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "delivery_rider": "https://images.unsplash.com/photo-1602517232715-c4a366f0ce1b?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "paris_context": "https://images.pexels.com/photos/20409349/pexels-photo-20409349.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+    },
+    "icons": "Use 'lucide-react' for all UI icons. Use 'Bike', 'Battery', 'MapPin', 'ShieldCheck', 'TrendingUp' for features."
+  },
+  "visual_enhancers": {
+    "gradients": "Use the Blue-to-Green gradient (#27AAE1 -> #2BB673) for key interactive elements and text highlights (bg-clip-text).",
+    "shadows": "Soft, diffuse shadows (shadow-lg) for floating elements. Sharp, hard shadows not recommended for this premium B2B look.",
+    "border_radius": "Rounded-xl to Rounded-3xl for containers. Pill shape for buttons."
+  },
+  "accessibility": {
+    "contrast": "Ensure text on gradient backgrounds is always White. Dark text on Off-White backgrounds.",
+    "focus_states": "Visible focus ring in Primary Blue."
+  },
+  "universal_guidelines": [
+    "Do not use generic 'Inter' font for headings.",
+    "Use 'lenis' for smooth scrolling if possible.",
+    "Ensure all images have alt text.",
+    "Mobile-first responsive design is mandatory.",
+    "Use data-testid on all interactive elements."
+  ],
+  "instructions_to_main_agent": "Focus on building a high-trust, conversion-oriented B2B site. The 'Quote Request' is the primary goal. Make the 'Get a Quote' button always visible (sticky header). Use the 'Bento' grid layout for the 'Why Flockee?' section to make specs look interesting. Use the Blue/Green gradient as the 'Brand Signature' but don't overuse it - keep backgrounds clean white."
+}
