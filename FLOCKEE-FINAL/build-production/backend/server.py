@@ -12,26 +12,29 @@ import uuid
 from datetime import datetime, timezone
 import resend
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from fastapi import FastAPI, APIRouter
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from typing import Optional
+from datetime import datetime, timezone
+import uuid
+import logging
+import resend
+import os
+from dotenv import load_dotenv
+from pathlib import Path
 
+# Load .env
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
-
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
 
 # Email configuration
 resend.api_key = os.environ.get('RESEND_API_KEY', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'contact@flockee.fr')
 
-# LLM configuration
-EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
-
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Models
@@ -46,103 +49,41 @@ class QuoteRequest(BaseModel):
     message: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-class QuoteRequestCreate(BaseModel):
-    restaurant_name: str
-    city: str
-    bike_count: int
-    email: EmailStr
-    phone: str
-    message: Optional[str] = None
+# Route
+@api_router.post("/quote-request")
+async def create_quote_request(data: QuoteRequest):
 
-class ChatMessage(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    session_id: str
-    role: str
-    content: str
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    try:
+        resend.Emails.send({
+            "from": SENDER_EMAIL,
+            "to": ["tonemail@gmail.com"],  # 👉 REMPLACE PAR TON EMAIL
+            "subject": f"Nouveau devis - {data.restaurant_name}",
+            "html": f"""
+                <h2>Nouvelle demande de devis 🚴</h2>
 
-class ChatRequest(BaseModel):
-    session_id: str
-    message: str
+                <p><strong>Restaurant:</strong> {data.restaurant_name}</p>
+                <p><strong>Ville:</strong> {data.city}</p>
+                <p><strong>Nombre de vélos:</strong> {data.bike_count}</p>
 
-class ChatResponse(BaseModel):
-    response: str
-    session_id: str
+                <hr>
 
-# Routes
-@api_router.get("/")
-async def root():
-    return {"message": "Flockee API"}
+                <p><strong>Email:</strong> {data.email}</p>
+                <p><strong>Téléphone:</strong> {data.phone}</p>
 
-@api_router.post("/quote-request", response_model=QuoteRequest)
-async def create_quote_request(input: QuoteRequestCreate):
-    """Create a new quote request and send email notification"""
-    quote_dict = input.model_dump()
-    quote_obj = QuoteRequest(**quote_dict)
-    
-    doc = quote_obj.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    
-    await db.quote_requests.insert_one(doc)
-    
-    # Send email notification
-    if resend.api_key and resend.api_key != 're_placeholder_get_from_user':
-        try:
-            html_content = f"""
-            <html>
-                <body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f7fff7;">
-                    <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px;">
-                        <h1 style="color: #27AAE1; margin-bottom: 20px;">Nouvelle demande de devis Flockee</h1>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Restaurant:</strong> {input.restaurant_name}
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Ville:</strong> {input.city}
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Nombre de vélos:</strong> {input.bike_count}
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Email:</strong> {input.email}
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Téléphone:</strong> {input.phone}
-                        </div>
-                        {f'<div style="margin-bottom: 15px;"><strong>Message:</strong> {input.message}</div>' if input.message else ''}
-                    </div>
-                </body>
-            </html>
+                <hr>
+
+                <p><strong>Message:</strong><br>{data.message}</p>
             """
-            
-            params = {
-                "from": SENDER_EMAIL,
-                "to": ["contact@flockee.fr"],
-                "subject": f"Nouvelle demande de devis - {input.restaurant_name}",
-                "html": html_content
-            }
-            
-            await asyncio.to_thread(resend.Emails.send, params)
-            logger.info(f"Email sent for quote request from {input.restaurant_name}")
-        except Exception as e:
-            logger.error(f"Failed to send email: {str(e)}")
-    
-    return quote_obj
+        })
 
-@api_router.get("/quote-requests", response_model=List[QuoteRequest])
-async def get_quote_requests():
-    """Get all quote requests"""
-    requests = await db.quote_requests.find({}, {"_id": 0}).to_list(1000)
-    
-    for req in requests:
-        if isinstance(req['created_at'], str):
-            req['created_at'] = datetime.fromisoformat(req['created_at'])
-    
-    return requests
+        return {"success": True}
 
-@api_router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
-    """Chat with Flockee AI assistant"""
+    except Exception as e:
+        logger.error(str(e))
+        return {"error": str(e)}
+
+# Include router
+app.include_router(api_router)
     try:
         # Load chat history
         history = await db.chat_messages.find(
