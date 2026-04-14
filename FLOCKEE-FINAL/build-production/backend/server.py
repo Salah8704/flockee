@@ -28,7 +28,7 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # Email configuration
-resend.api_key = os.environ.get('RESEND_API_KEY',re_dB3et3ah_9o69D34SbqbHJiKUoXFm4Ufv '')
+resend.api_key = os.environ.get('RESEND_API_KEY', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'contact@flockee.fr')
 
 app = FastAPI()
