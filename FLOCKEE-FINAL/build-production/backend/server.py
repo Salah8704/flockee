@@ -56,7 +56,7 @@ async def create_quote_request(data: QuoteRequest):
     try:
         resend.Emails.send({
             "from": SENDER_EMAIL,
-            "to": ["tonemail@gmail.com"],  # 👉 REMPLACE PAR TON EMAIL
+            "to": ["contact@flockee.fr"],  
             "subject": f"Nouveau devis - {data.restaurant_name}",
             "html": f"""
                 <h2>Nouvelle demande de devis 🚴</h2>
